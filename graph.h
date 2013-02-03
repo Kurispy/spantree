@@ -1,9 +1,15 @@
 #ifndef GRAPH_H
 #define	GRAPH_H
 
-#include <cstdio>
+#include <iostream>
 
 using namespace std;
+
+struct Edge {
+    int vertex1;
+    int vertex2;
+    int weight;
+};
 
 class Graph {
 public:
@@ -14,7 +20,7 @@ private:
     friend ostream& operator<< (ostream &os, const Graph &graph);
     int num_verticies_;
     int num_edges_;
-    MinHeap<Edge> edges_;
+    MinHeap<Edge> edges_; //set? list?
 };
 
 class UnconnectedGraph: public Graph {
@@ -34,7 +40,7 @@ private:
     //Sorts graphs in ascending order based on the number of vertexes.
     //When graphs have the same number of vertexes, the graph with the
     //smaller minimum edge is considered to have fewer vertexes
-    void Sort(LinkedList<Graph> graphlist);
+    void Sort(LinkedList<Graph> graphlist); //necessary?
     
     LinkedList<Graph> component_list_;
 };
