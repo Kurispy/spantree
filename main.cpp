@@ -1,19 +1,20 @@
 #include <cstdio>
+#include "graph.h"
 
 using namespace std;
 
 //Time to spread some democracy
 int main(void) {
     //Read in the country
-    Country country;
-    cin >> country;
+    Graph mafghanistan;
+    cin >> mafghanistan;
     
     //Determine roads
-    country.rebuild();
+    mafghanistan.createMST();
     
     //Print out the country
     cout << "<?xml version=\"1.4\"?>\n";
-    cout << country;
+    cout << mafghanistan;
     
     return 0;
 }
