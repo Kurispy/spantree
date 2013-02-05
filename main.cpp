@@ -10,13 +10,16 @@ int main(void) {
     cin >> mafghanistan;
     
     //Sort roads
-    mafghanistan.SortEdges();
+    mafghanistan.SortEdges(mafghanistan.edges_, 0, mafghanistan.num_edges_ - 1);
     
     //Determine roads
-    cout << "<?xml version=\"1.4\"?>\n";
     mafghanistan.CreateMST();
-
-
     
+    //Sort components
+    mafghanistan.SortComponents(mafghanistan.components_, 0, mafghanistan.num_components_ - 1);
+    
+    //Print out country
+    cout << mafghanistan;
+ 
     return 0;
 }

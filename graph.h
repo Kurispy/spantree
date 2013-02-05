@@ -5,28 +5,21 @@
 
 using namespace std;
 
-class Vertex {
-public:
-    int value();
-    void set_value(const int value);
-    int absolute_index();
-    void set_absolute_index(const int absolute_index);
-    int num_vertices();
-    void set_num_vertices(const int num_vertices);
-private:
-    friend istream& operator>> (istream &is, Vertex &vertex);
-    friend ostream& operator<< (ostream &os, const Vertex &vertex);
+struct Vertex {
     //A negative value means that this vertex is a root, and that it has a rank
     //of abs(value_)
-    int value_;
-    int abolsute_index_;
+    int value;
+    int abolsute_index;
     //This value is meaningless unless the vertex is a root
-    int num_vertices_;
+    int num_vertices;
+    //Solely for non-determinism
+    int min_vertex;
 };
 
 struct Edge {
-    Vertex vertex1;
-    Vertex vertex2;
+    //The vertices are indexes that point to a location within vertices_
+    int vertex1;
+    int vertex2;
     int weight;
     //Set to 1 if part of the MSF, 0 otherwise
     bool is_min; //Initialize to 0
@@ -35,26 +28,40 @@ struct Edge {
 
 class Graph {
 public:
-    int num_verticies();
-    int num_edges();
     //Creates minimum spanning tree
-    virtual void CreateMST();
-protected:
-    int num_vertices_;
-    int num_edges_;
-    Vertex *vertices_;
-    Edge *edges_;
-    Vertex *components_;
-private:
-    friend istream& operator>> (istream &is, Graph &graph);
-    friend ostream& operator<< (ostream &os, const Graph &graph);
+    void CreateMST();
+    //Sorts edges according to their weight and minimum vertex
+    void SortEdges(Edge **edges, int left, int right);
+    //Swaps elements of edges so that elements left of the pivotIndex are less
+    //than the pivot value and elements to the right are greater
+    int PartitionEdges(Edge **edges, int left, int right, int pivotIndex);
+    //Returns 1 if edge1 < edge2, 0 otherwise
+    bool CompareEdges(Edge edge1, Edge edge2);
+    //Sorts components according to the number of vertices they contain and
+    //their minimum road
+    void SortComponents(Vertex **components, int left, int right);
+    //Swaps elements of components so that elements left of the pivotIndex are less
+    //than the pivot value and elements to the right are greater
+    int PartitionComponents(Vertex **components, int left, int right, int pivotIndex);
+    //Returns 1 if component1 < component2, 0 otherwise
+    bool CompareComponents(Vertex component1, Vertex component2);
     //Returns 1 if the union succeeds, 0 otherwise
-    bool Union(Vertex vertex1, Vertex vertex2);
+    bool Union(int vertex1, int vertex2);
     //Recursively calls Find until a root is reached, then returns the absolute
     //index of the root
     int Find(int vertexindex);
     //Prints the MST of a connected component of the graph
-    void PrintComponent(const Vertex &component);
+    void PrintComponent(const Vertex &component) const;
     //Prints an edge
-    void PrintEdge(const Edge &edge);
+    void PrintEdge(const Edge &edge) const;
+    friend istream& operator>> (istream &is, Graph &graph);
+    friend ostream& operator<< (ostream &os, const Graph &graph);
+    int num_vertices_;
+    int num_edges_;
+    int num_components_;
+    Vertex *vertices_;
+    Edge **edges_;
+    Vertex **components_;
 };
+
+#endif /* GRAPH_H */
