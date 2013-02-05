@@ -8,25 +8,31 @@ using namespace std;
 class Vertex {
 public:
     int value();
-    void set_value();
+    void set_value(const int value);
     int absolute_index();
     void set_absolute_index(const int absolute_index);
+    int num_vertices();
+    void set_num_vertices();
 private:
     //A negative value means that this vertex is a root, and that it has a rank
     //of abs(value_)
     int value_;
     int abolsute_index_;
+    //This value is meaningless unless the vertex is a root
+    int num_vertices_;
 };
 
 struct Edge {
     Vertex vertex1;
     Vertex vertex2;
     int weight;
+    //Set to 1 if part of the MSF, 0 otherwise
+    bool is_min; //Initialize to 0
+    int component;
 };
 
 class Graph {
 public:
-    Graph();
     int num_verticies();
     int num_edges();
     //Creates minimum spanning tree
@@ -35,35 +41,13 @@ protected:
     int num_vertices_;
     int num_edges_;
     Vertex *vertices_;
-    int *edges_;
+    Edge *edges_;
 private:
-    friend istream& operator>> (istream &is, UnconnectedGraph &graph);
-    friend ostream& operator<< (ostream &os, const UnconnectedGraph &graph);
+    friend istream& operator>> (istream &is, Graph &graph);
+    friend ostream& operator<< (ostream &os, const Graph &graph);
+    //Returns 1 if the union succeeds, 0 otherwise
+    bool Union(Vertex vertex1, Vertex vertex2);
+    //Recursively calls Find until a root is reached, then returns the absolute
+    //index of the root
+    int Find(int vertexindex);
 };
-
-class UnconnectedGraph: public Graph {
-public:
-    void Partition();
-    void CreateMST();
-private:
-    //Merges two graphs if necessary, then adds edge to the edge list
-    //of that graph
-    //Returns 1 if the union succeeded, 0 otherwise
-    bool Union(int vertexindex1, int vertexindex2);
-    
-    //Finds the subgraph that vertex belongs to and returns its parent
-    Vertex& Find(const Vertex &vertex);
-    
-    //Sorts graphs in ascending order based on the number of vertexes.
-    //When graphs have the same number of vertexes, the graph with the
-    //smaller minimum edge is considered to have fewer vertexes
-    void Sort(LinkedList<Graph> graphlist); //necessary?
-    
-    friend istream& operator>> (istream &is, UnconnectedGraph &graph);
-    friend ostream& operator<< (ostream &os, const UnconnectedGraph &graph);
-    
-    LinkedList<Graph> component_list_;
-};
-
-#endif	/* GRAPH_H */
-

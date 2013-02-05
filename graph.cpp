@@ -2,65 +2,55 @@
 
 using namespace std;
 
-Graph::Graph() {
-    int edges[4][num_edges_];
-    //edge[0][i]: first vertex of the ith edge
-    //edge[1][i]: second vertex of the ith edge
-    //edge[2][i]: weight of the ith edge
-    //edge[3][i]: set to 1 if the ith edge is included in the MSF
-    edges_ = edges;
-}
-
 void Graph::CreateMST() {
-    //MakeSet
-    for (int i = 0; i < num_vertices_; i++) {
-        vertices_[i].set_value(-1);
-        vertices_[i].set_absolute_index(i);
+    //First Pass:
+    //Determines which edges are in the MSF
+    for (int i = 0; i < num_edges_; i++) {
+        edges_[i].is_min = Union(edges_[i].vertex1, edges_[i].vertex2);
     }
     
+    //Second Pass:
+    //Determines which edge goes with which component
     for (int i = 0; i < num_edges_; i++) {
-        edges_[3][i] = Union(edges_[0][i], edges_[1][i]);
+        if (edges_[i].is_min)
+            edges_[i].component = Find(edges_[i].vertex1);
     }
+    
+    //Third Pass:
+    //Sorts components based on number of vertices
 }
 
-istream& operator>> (istream &is, UnconnectedGraph &graph) {
-    cin >> graph.num_vertices_ >> graph.num_edges_; //Might leave ws
+istream& operator>> (istream &is, Graph &graph) {
+    cin >> graph.num_vertices_ >> graph.num_edges_;
     
-    //Read in edges and partition
-    graph.Partition();
+    //Each vertex is initialized as a root
+    Vertex vertices[graph.num_vertices_]; 
+    for (int i = 0; i < graph.num_vertices_; i++) {
+        vertices[i].set_value(-1);
+        vertices[i].set_absolute_index(i);
+    }
+    graph.vertices_ = vertices;
+    
+    Edge edges[graph.num_edges_];
+    for (int i = 0; i < graph.num_edges_; i++) {
+        cin >> edges[i].vertex1 >> edges[i].vertex2 >> edges[i].weight;
+        edges[i].is_min = 0;
+    }
+    graph.edges_ = edges;
     
     return is;
 }
 
-ostream& operator<< (ostream &os, const UnconnectedGraph &graph) {
+ostream& operator<< (ostream &os, const Graph &graph) {
     
 }
 
-void UnconnectedGraph::Partition() {
-    Edge *edge;
-    
-    //Go through all the edges and partition them into separate connected
-    //components
-    for (int i = 0; i < num_edges(); i++) {
-        edge = new Edge;
-        cin >> edge->vertex1 >> edge->vertex2 >> edge->weight;
-        edge->vertex1.Union(edge->vertex2);
-        //The edge needs to be associated with the set of vertexes that were
-        //just unified
-        
-    }
-}
-
-void UnconnectedGraph::CreateMST() {
-    
-}
-
-bool UnconnectedGraph::Union(int vertexindex1, int vertexindex2) {
+int Graph::Union(Vertex vertex1, Vertex vertex2) {
     //Determine whether or not the two vertexes are in the same graph
-    int v1root = Find(vertexindex1);
-    int v2root = Find(vertexindex2);
+    int v1root = Find(vertex1.absolute_index());
+    int v2root = Find(vertex2.absolute_index());
     if (v1root == v2root)
-        return 0;
+        return 1;
     
     //Vertex 1 and Vertex 2 are disjoint
     //Because values are negative, > and < are inverted
@@ -73,20 +63,12 @@ bool UnconnectedGraph::Union(int vertexindex1, int vertexindex2) {
         vertices_[v2root].set_value(vertices_[v2root].value() - 1);
     }
     
-    return 1;
+    return 0;
     
 }
 
-Vertex& UnconnectedGraph::Find(const Vertex &vertex) {
-    if (vertex.parent()->value() != vertex.value())
-        //Set vertex's parent to the root
-        vertex.set_parent(Find(vertex.parent()));
-    return vertex.parent();
-}
-
-int UnconnectedGraph::Find(int vertexindex) {
-    if (vertices_[vertexindex] >= 0)
-        vertices_[vertexindex] = find(vertices_[vertexindex]);
-    return vertices_[vertexindex].absoluteindex;
-    
+int Graph::Find(int vertexindex) {
+    if (vertices_[vertexindex].value() >= 0)
+        vertices_[vertexindex].set_value(Find(vertices_[vertexindex]));
+    return vertices_[vertexindex].absolute_index();
 }
