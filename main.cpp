@@ -28,4 +28,8 @@ int main(void) {
     return 0;
 }
 
-//TODO: FIX SORTEDGES
+//Debug
+//for (int k = 0; k < num_vertices_; k++)
+//    cout << vertices_[k].value << " ";
+//cout << endl;
+//Debug

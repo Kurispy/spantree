@@ -12,6 +12,7 @@ void Graph::CreateMST() {
     //Determines which edges are in the MSF
     for (int i = 0; i < num_edges_; i++) {
         edges_[i]->is_min = Union(edges_[i]->vertex1, edges_[i]->vertex2);
+        
     }
     
     //Second Pass:
@@ -21,18 +22,16 @@ void Graph::CreateMST() {
             edges_[i]->component = Find(edges_[i]->vertex1);
     }
     
-    Vertex *components[num_vertices_];
+    components_ = new Vertex*[num_vertices_];
     num_components_ = 0; 
     
     //Compresses the vertex list into a list of components
     for (int i = 0; i < num_vertices_; i++) {
         if (vertices_[i].value < 0) {
-            components[num_components_] = &vertices_[i];
+            components_[num_components_] = &vertices_[i];
             num_components_++;
         }
     }
-    
-    components_ = components;
 }
 
 void Graph::SortEdges(Edge **edges, int left, int right) {
@@ -40,8 +39,6 @@ void Graph::SortEdges(Edge **edges, int left, int right) {
     if (left < right) {
         pivotIndex = (left + right) / 2;
         pivotIndex = PartitionEdges(edges, left, right, pivotIndex);
-//        for (int i = 0; i < num_edges_; i++)
-//            cout << edges[i]->weight << " ";
         SortEdges(edges, left, pivotIndex - 1);
         SortEdges(edges, pivotIndex + 1, right);
     }
@@ -60,7 +57,7 @@ int Graph::PartitionEdges(Edge **edges, int left, int right, int pivotIndex) {
     edges[right] = temp;
     //--Swap--
     finalIndex = left;
-    for (int i = left; i < right - 1; i++) {
+    for (int i = left; i < right; i++) {
         if (CompareEdges(*(edges[i]), *(pivotValue))) {
             temp = edges[i];
             edges[i] = edges[finalIndex];
@@ -114,7 +111,7 @@ int Graph::PartitionComponents(Vertex **components, int left, int right, int piv
     components[right] = temp;
     //--Swap--
     finalIndex = left;
-    for (int i = left; i < right - 1; i++) {
+    for (int i = left; i < right; i++) {
         if (CompareComponents(*(components[i]), *(pivotValue))) {
             temp = components[i];
             components[i] = components[finalIndex];
@@ -146,7 +143,7 @@ bool Graph::Union(int vertex1, int vertex2) {
     int v1root = Find(vertex1);
     int v2root = Find(vertex2);
     if (v1root == v2root)
-        return 1;
+        return 0;
     
     //Vertex 1 and Vertex 2 are disjoint
     //Because values are negative, > and < are inverted
@@ -170,14 +167,16 @@ bool Graph::Union(int vertex1, int vertex2) {
             vertices_[v2root].min_vertex = vertices_[v1root].min_vertex;
     }
     
-    return 0;
+    return 1;
     
 }
 
 int Graph::Find(int vertexindex) {
     if (vertices_[vertexindex].value >= 0)
         vertices_[vertexindex].value = Find(vertices_[vertexindex].value);
-    return vertices_[vertexindex].abolsute_index;
+    else
+        return vertices_[vertexindex].abolsute_index;
+    return vertices_[vertexindex].value;
 }
 
 void Graph::PrintComponent(const Vertex &component) const {
@@ -232,7 +231,7 @@ ostream& operator<< (ostream &os, const Graph &graph) {
     for (int i = 0; i < graph.num_components_; i++) {
         graph.PrintComponent(*(graph.components_[i]));
     }
-    cout << "</country>"; //Newline?
+    cout << "</country>\n"; //Newline?
     
     return os;
 }
