@@ -6,18 +6,17 @@ using namespace std;
 //Time to spread some democracy
 int main(void) {
     //Read in the country
-    UnconnectedGraph mafghanistan;
+    Graph mafghanistan;
     cin >> mafghanistan;
     
-    //Determine regions
-    mafghanistan.Partition();
+    //Sort roads
+    mafghanistan.SortEdges();
     
     //Determine roads
-    mafghanistan.CreateMST();
-    
-    //Print out the country
     cout << "<?xml version=\"1.4\"?>\n";
-    cout << mafghanistan;
+    mafghanistan.CreateMST();
+
+
     
     return 0;
 }

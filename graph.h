@@ -12,8 +12,10 @@ public:
     int absolute_index();
     void set_absolute_index(const int absolute_index);
     int num_vertices();
-    void set_num_vertices();
+    void set_num_vertices(const int num_vertices);
 private:
+    friend istream& operator>> (istream &is, Vertex &vertex);
+    friend ostream& operator<< (ostream &os, const Vertex &vertex);
     //A negative value means that this vertex is a root, and that it has a rank
     //of abs(value_)
     int value_;
@@ -42,6 +44,7 @@ protected:
     int num_edges_;
     Vertex *vertices_;
     Edge *edges_;
+    Vertex *components_;
 private:
     friend istream& operator>> (istream &is, Graph &graph);
     friend ostream& operator<< (ostream &os, const Graph &graph);
@@ -50,4 +53,8 @@ private:
     //Recursively calls Find until a root is reached, then returns the absolute
     //index of the root
     int Find(int vertexindex);
+    //Prints the MST of a connected component of the graph
+    void PrintComponent(const Vertex &component);
+    //Prints an edge
+    void PrintEdge(const Edge &edge);
 };
