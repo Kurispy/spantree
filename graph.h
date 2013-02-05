@@ -17,10 +17,11 @@ struct Vertex {
 };
 
 struct Edge {
+    Edge(int vertex1, int vertex2, int weight);
     //The vertices are indexes that point to a location within vertices_
     int vertex1;
     int vertex2;
-    int weight;
+    const int weight;
     //Set to 1 if part of the MSF, 0 otherwise
     bool is_min; //Initialize to 0
     int component;

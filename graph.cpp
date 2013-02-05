@@ -2,6 +2,11 @@
 
 using namespace std;
 
+Edge::Edge(int vertex1, int vertex2, int weight) 
+:vertex1(vertex1), vertex2(vertex2), weight(weight), is_min(0), component(0) {
+    
+}
+
 void Graph::CreateMST() {
     //First Pass:
     //Determines which edges are in the MSF
@@ -35,6 +40,8 @@ void Graph::SortEdges(Edge **edges, int left, int right) {
     if (left < right) {
         pivotIndex = (left + right) / 2;
         pivotIndex = PartitionEdges(edges, left, right, pivotIndex);
+//        for (int i = 0; i < num_edges_; i++)
+//            cout << edges[i]->weight << " ";
         SortEdges(edges, left, pivotIndex - 1);
         SortEdges(edges, pivotIndex + 1, right);
     }
@@ -191,31 +198,28 @@ istream& operator>> (istream &is, Graph &graph) {
     cin >> graph.num_vertices_ >> graph.num_edges_;
     
     //Each vertex is initialized as a root
-    Vertex vertices[graph.num_vertices_]; 
+    graph.vertices_ = new Vertex[graph.num_vertices_]; 
     for (int i = 0; i < graph.num_vertices_; i++) {
-        vertices[i].value = -1;
-        vertices[i].abolsute_index = i;
-        vertices[i].num_vertices = 1;
-        vertices[i].min_vertex = i;
+        graph.vertices_[i].value = -1;
+        graph.vertices_[i].abolsute_index = i;
+        graph.vertices_[i].num_vertices = 1;
+        graph.vertices_[i].min_vertex = i;
     }
-    graph.vertices_ = vertices;
     
-    Edge *edges[graph.num_edges_];
-    Edge edge;
-    int temp = 0;
+    graph.edges_ = new Edge*[graph.num_edges_];
+    Edge *edge;
+    int vertex1, vertex2, weight;
     for (int i = 0; i < graph.num_edges_; i++) {
-        cin >> edge.vertex1 >> edge.vertex2 >> edge.weight;
+        
+        cin >> vertex1 >> vertex2 >> weight;
         //Guarantees that vertex1 will always be less than vertex2
-        if (edge.vertex1 > edge.vertex2) {
-            temp = edge.vertex1;
-            edge.vertex1 = edge.vertex2;
-            edge.vertex2 = edge.vertex1;
-        }
-        edge.is_min = 0;
-        edges[i] = &edge;
+        if (vertex1 < vertex2)
+            edge = new Edge(vertex1, vertex2, weight);
+        else 
+            edge = new Edge(vertex2, vertex1, weight);
+        
+        graph.edges_[i] = edge;
     }
-    temp++; //This gets rid of the warning
-    graph.edges_ = edges;
     
     return is;
 }

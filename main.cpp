@@ -5,9 +5,13 @@ using namespace std;
 
 //Time to spread some democracy
 int main(void) {
-    //Read in the country
     Graph mafghanistan;
+    
+    //Read in the country
     cin >> mafghanistan;
+    
+    //cout << mafghanistan.edges_[4]->weight << endl;
+    //cout << mafghanistan.edges_[5]->weight;
     
     //Sort roads
     mafghanistan.SortEdges(mafghanistan.edges_, 0, mafghanistan.num_edges_ - 1);
@@ -23,3 +27,5 @@ int main(void) {
  
     return 0;
 }
+
+//TODO: FIX SORTEDGES
