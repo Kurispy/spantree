@@ -180,10 +180,19 @@ int Graph::Find(int vertexindex) {
 }
 
 void Graph::PrintComponent(const Vertex &component) const {
+    int edgesfound = 0;
     cout << "<region>\n";
-    for (int k = 0; k < num_edges_; k++) {
-            if (edges_[k]->is_min && component.abolsute_index == edges_[k]->component)
+    //Only print roads if there are any
+    if (component.value < -1) {
+        for (int k = 0; k < num_edges_; k++) {
+            if (edges_[k]->is_min && component.abolsute_index == edges_[k]->component) {
                 PrintEdge(*(edges_[k]));
+                edgesfound++;
+            }
+            //If we have found the n-1th edge, it is the last edge in the component
+            if (edgesfound == component.num_vertices - 1)
+                break;
+        }
     }
     cout << "</region>\n";
 }
