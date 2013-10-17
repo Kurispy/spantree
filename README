@@ -1,0 +1,11 @@
+Takes a graph from standard input and outputs the 
+minimum spanning forest (union of all MSTs of its
+connected components if the graph is not 
+connected.) Input is given in the form described 
+by the psuedo-EBNF:
+
+input ::= <num_verticies> <num_edges> {<edge>}
+edge ::= <vertex1> <vertex2> <weight>
+
+Output is given in an xml format that describes
+the roads in the minimum spanning forest.
